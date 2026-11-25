@@ -36,7 +36,7 @@ function chart(rows, base) {
 function spark(vals, up) {
   if (!vals || vals.length < 2) return ''
   const w = 300, h = 44, lo = Math.min(...vals), hi = Math.max(...vals), y = (v) => h - 3 - ((v - lo) / (hi - lo || 1)) * (h - 6)
-  return `<svg class="dh-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="${vals.map((v, i) => `${i ? 'L' : 'M'}${((i / (vals.length - 1)) * w).toFixed(1)} ${y(v).toFixed(1)}`).join('')}" fill="none" stroke="${up ? '#128a4a' : '#c2334a'}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`
+  return `<svg class="dh-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="${vals.map((v, i) => `${i ? 'L' : 'M'}${((i / (vals.length - 1)) * w).toFixed(1)} ${y(v).toFixed(1)}`).join('')}" fill="none" stroke="${up ? '#128a4a' : '#c2334a'}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`
 }
 const stat = (label, value, sub = '', c = '') => `<div class="dh-stat"><span class="dh-label">${label}</span><b class="${c}">${value}</b>${sub ? `<small>${sub}</small>` : ''}</div>`
 const planHtml = (plan) => `<dl class="dh-plan">${plan.map((l) => `<div><dt>${esc(l.t)}</dt><dd>${esc(l.d)}</dd></div>`).join('')}</dl>`
@@ -111,7 +111,7 @@ async function market() {
     const l = all.filter((x) => mk.kind === 'All' || x.kind === mk.kind).sort((a, b) => mk.sort === 'ret' ? b.ret - a.ret : mk.sort === 'new' ? b.updated.localeCompare(a.updated) : b.installs - a.installs || b.ret - a.ret)
     $('#list').innerHTML = l.length ? l.map((x) => `<a class="dh-listing" href="/market/${x.id}" data-link><div class="dh-row between">${toks(x.markets)}<span class="dh-price">${x.price ? usd(x.price) : 'Free'}</span></div>
       <div><h3>${esc(x.name)}</h3><div class="dh-small dh-mute" style="margin-top:.25rem">${esc(x.kind)} by ${esc(x.by)}, v${x.version}</div></div><p>${esc(x.pitch)}</p>${spark(x.spark, x.ret >= 0)}
-      <div class="foot"><span>30 days <b class="${cls(x.ret)}">${pct(x.ret)}</b> · holding ${pct(x.holdRet)}</span><span>${x.installs} install${x.installs === 1 ? '' : 's'}</span></div></a>`).join('') : '<div class="dh-empty" style="grid-column:1/-1">No listing of that kind yet. Publish the first one from one of your agents.</div>'
+      <div class="foot"><span>30 days <b class="${cls(x.ret)}">${pct(x.ret)}</b> · holding ${pct(x.holdRet)}</span><span>${x.installs ? `${x.installs} install${x.installs === 1 ? '' : 's'}` : `${x.trades} trades in replay`}</span></div></a>`).join('') : '<div class="dh-empty" style="grid-column:1/-1">No listing of that kind yet. Publish the first one from one of your agents.</div>'
   }
   page(`${head('Marketplace', 'Agents written by other people. Each one shows its rules, its permissions and its 30-day simulation. You install your own copy, with your own budget.', '<a class="dh-btn is-ghost" href="/desk" data-link>Publish an agent</a>')}
     <div class="dh-filters"><div class="dh-seg" id="kind">${['All', 'Rules', 'Scheduled buy', 'Basket'].map((k) => `<button class="${mk.kind === k ? 'on' : ''}">${k}</button>`).join('')}</div>
@@ -134,7 +134,7 @@ async function listing(id) {
       <div class="dh-row" style="margin-top:1rem"><button class="dh-btn" id="eSave">Save</button><button class="dh-btn is-quiet" id="eRetire">${l.status === 'live' ? 'Retire the listing' : 'Put it back on sale'}</button></div>
       <h3 style="margin-top:1.6rem">Sales</h3>${l.sales.length ? `<div class="dh-scroll"><table class="dh-table"><thead><tr><th>Date</th><th>Buyer</th><th>Version</th><th class="num">Paid</th><th>Payment</th></tr></thead><tbody>${l.sales.map((x) => `<tr><td>${day(x.created)}</td><td class="dh-mono dh-small">${esc(x.addr)}</td><td>v${x.version}</td><td class="num">${x.paid ? usd(x.paid) : 'Free'}</td><td>${x.tx ? `<a href="${explorer(x.tx)}" target="_blank" rel="noopener">Transaction</a>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<p class="dh-small dh-mute" style="margin:0">No install yet.</p>'}</div>` : ''}
   </div><div class="dh-stack">
-    <div class="dh-card is-dark"><div class="dh-row between"><span class="dh-label">Price</span><span class="dh-label">${l.installs} install${l.installs === 1 ? '' : 's'}</span></div>
+    <div class="dh-card is-dark"><div class="dh-row between"><span class="dh-label">Price</span><span class="dh-label">${l.installs ? `${l.installs} install${l.installs === 1 ? '' : 's'}` : `v${l.version} · ${esc(l.kind)}`}</span></div>
       <div style="font-size:2rem;font-weight:600;letter-spacing:-.02em;margin:.4rem 0 1rem">${l.price ? usd(l.price) + ' <span style="font-size:.9rem;font-weight:400;color:#97a4b7">USDG, once</span>' : 'Free'}</div>
       <label class="dh-field"><span class="dh-label">Your budget, USD</span><input class="dh-input" id="iBudget" type="number" min="20" step="10" value="${l.budget}"></label>
       <div class="dh-seg" id="iMode" style="margin-top:.9rem"><button data-m="paper" class="on">Paper mode</button><button data-m="wallet">Wallet mode</button></div>
@@ -214,11 +214,45 @@ async function board() {
     <tbody>${rows.map((a, i) => `<tr data-go="/agents/${a.id}"><td class="dh-mono dh-small">${i + 1}</td><td><b>${esc(a.name)}</b><div class="dh-small dh-mute">${esc(a.by)}</div></td><td>${esc(a.kind)}</td><td>${toks(a.markets)}</td><td><span class="dh-status ${a.status}">${a.mode}</span></td><td class="num ${cls(a.ret)}">${pct(a.ret, 2)}</td><td class="num ${cls(a.holdRet)}">${pct(a.holdRet, 2)}</td><td class="num">${a.trades}</td><td class="num">${a.hours}</td></tr>`).join('')}</tbody></table></div></div>
     <div class="dh-card" style="margin-top:1.25rem"><h2>Latest decisions</h2>${logHtml(act, true)}</div>`)
 }
+// ---- live clock: prices are read two minutes after every hour ----
+const nextRead = () => { const n = Date.now(), h = 3600e3; let t = Math.floor(n / h) * h + 120e3; if (t <= n) t += h; return t }
+const mmss = (ms) => { const s = Math.max(0, Math.round(ms / 1000)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}` }
+function liveClock(el, lastHour, onTick) {
+  clearInterval(liveClock.t); const draw = () => { if (!document.body.contains(el)) return clearInterval(liveClock.t); const left = nextRead() - Date.now()
+    el.innerHTML = `<span class="dh-live"></span>Live on chain · last read ${new Date(lastHour * 3600e3).toISOString().slice(11, 16)} UTC · next read in <b>${mmss(left)}</b>`
+    if (left < 1500 && onTick) setTimeout(onTick, 4000) }
+  draw(); liveClock.t = setInterval(draw, 1000)
+}
+const mkt = (m) => `<span class="dh-mkt"><img src="/logos/${esc(m.symbol)}.png" alt="" loading="lazy"><span><b>${esc(m.name)}</b><small>${esc(m.symbol)}${m.type === 'crypto' ? ' · crypto' : ' · stock token'}</small></span></span>`
+const range = (m) => { const lo = m.low7d, hi = m.high7d, p = hi > lo ? (m.price - lo) / (hi - lo) : 0.5
+  return `<div class="dh-range" title="7-day low ${usd(lo)}, high ${usd(hi)}"><i style="left:${(p * 100).toFixed(1)}%"></i></div><div class="dh-range-l"><span>${usd(lo)}</span><span>${usd(hi)}</span></div>` }
+const briefFor = (s) => `/app?brief=${encodeURIComponent(`Buy $50 of ${s} every Monday at 14:00 UTC, with a budget of $1,000.`)}`
+let mkState = { sort: 'change24h', dir: -1, type: 'all', q: '' }
 async function markets() {
-  const rows = await api('/markets')
-  page(`${head('Markets', '20 stock tokens plus bitcoin and ether on Robinhood Chain. Prices are read every hour from each token’s USDG pool.')}
-    <div class="dh-card"><div class="dh-scroll"><table class="dh-table"><thead><tr><th>Market</th><th class="num">Price</th><th class="num">24 hours</th><th class="num">7 days</th><th style="width:9rem">7 days</th><th class="num">Agents</th></tr></thead>
-    <tbody>${rows.map((m) => `<tr data-go="/markets/${m.symbol}"><td>${tok(m.symbol, m.name)} <span class="dh-mono dh-small dh-mute">${m.symbol}</span></td><td class="num">${usd(m.price)}</td><td class="num ${cls(m.change24h)}">${pct(m.change24h, 2)}</td><td class="num ${cls(m.change7d)}">${pct(m.change7d, 2)}</td><td>${spark(m.week.filter((x) => x != null), (m.change7d || 0) >= 0)}</td><td class="num">${m.agents}</td></tr>`).join('')}</tbody></table></div></div>`)
+  const rows = await api('/markets'), st = await api('/stats')
+  const ok = rows.filter((m) => m.price != null), by = (k) => ok.slice().sort((a, b) => (b[k] ?? -1e9) - (a[k] ?? -1e9))
+  const up = by('change24h')[0], down = by('change24h').at(-1), wk = by('change7d')[0], busy = by('decisions24h')[0]
+  const mover = (label, m, v, sub) => `<a class="dh-mover" href="/markets/${m.symbol}" data-link><div class="dh-row between"><span class="dh-label">${label}</span><img src="/logos/${m.symbol}.png" alt=""></div>
+    <div class="dh-mover-v ${cls(v)}">${pct(v, 2)}</div><div class="dh-small dh-mute">${esc(m.name)} · ${usd(m.price)}</div>${spark(m.week.filter((x) => x != null), (m.change7d || 0) >= 0)}<div class="dh-small dh-mute">${sub}</div></a>`
+  page(`${head('Markets', '20 stock tokens plus bitcoin and ether on Robinhood Chain, each read from its USDG pool every hour. Put an agent on any of them in one sentence.', '<span class="dh-clock" id="clock"></span>')}
+    <div class="dh-movers">${mover('Top gainer · 24h', up, up.change24h, 'Strongest move of the last day')}${mover('Top loser · 24h', down, down.change24h, 'Where dip buyers look first')}${mover('Best week', wk, wk.change7d, '7-day change')}${mover('Most watched by agents', busy, busy.change24h, `${busy.decisions24h} agent decisions in 24h`)}</div>
+    <div class="dh-filters" style="margin-top:1.5rem"><div class="dh-seg" id="mtype">${[['all', 'All 22'], ['stock', 'Stock tokens'], ['crypto', 'Crypto']].map(([k, t]) => `<button data-k="${k}" class="${mkState.type === k ? 'on' : ''}">${t}</button>`).join('')}</div>
+      <input class="dh-input" id="mq" placeholder="Search a ticker or a name" style="max-width:18rem" value="${esc(mkState.q)}"></div>
+    <div class="dh-card"><div class="dh-scroll"><table class="dh-table dh-mtable"><thead><tr><th data-s="name">Market</th><th class="num" data-s="price">Price</th><th class="num" data-s="change24h">24 hours</th><th class="num" data-s="change7d">7 days</th><th style="width:11rem">7-day range</th><th style="width:9rem">Last 7 days</th><th class="num">Agents</th></tr></thead><tbody id="mrows"></tbody></table></div></div>`)
+  liveClock($('#clock'), st.lastHour, () => route())
+  const draw = () => {
+    const q = mkState.q.trim().toLowerCase(), list = rows.filter((m) => (mkState.type === 'all' || m.type === mkState.type) && (!q || m.symbol.toLowerCase().includes(q) || m.name.toLowerCase().includes(q)))
+      .sort((a, b) => mkState.sort === 'name' ? mkState.dir * a.name.localeCompare(b.name) : mkState.dir * ((a[mkState.sort] ?? -1e9) - (b[mkState.sort] ?? -1e9)))
+    $$('.dh-mtable th[data-s]').forEach((th) => { th.classList.toggle('on', th.dataset.s === mkState.sort); th.dataset.dir = mkState.dir > 0 ? '↑' : '↓' })
+    $('#mrows').innerHTML = list.length ? list.map((m, i) => `<tr data-go="/markets/${m.symbol}" style="--i:${i}"><td>${mkt(m)}</td><td class="num">${usd(m.price)}</td><td class="num ${cls(m.change24h)}">${pct(m.change24h, 2)}</td><td class="num ${cls(m.change7d)}">${pct(m.change7d, 2)}</td>
+      <td>${m.price != null ? range(m) : ''}</td><td>${spark(m.week.filter((x) => x != null), (m.change7d || 0) >= 0)}</td>
+      <td class="num">${m.agents ? `<span class="dh-watch"><span class="dh-live"></span>${m.agents} running</span>` : `<a class="dh-btn is-quiet is-small" href="${briefFor(m.symbol)}" data-link>Add an agent</a>`}</td></tr>`).join('')
+      : '<tr><td colspan="7"><div class="dh-empty">No market matches that.</div></td></tr>'
+  }
+  draw()
+  $$('#mtype button').forEach((b) => (b.onclick = () => { mkState.type = b.dataset.k; $$('#mtype button').forEach((x) => x.classList.toggle('on', x === b)); draw() }))
+  $('#mq').oninput = (e) => { mkState.q = e.target.value; draw() }
+  $$('.dh-mtable th[data-s]').forEach((th) => (th.onclick = () => { const k = th.dataset.s; mkState.dir = mkState.sort === k ? -mkState.dir : k === 'name' ? 1 : -1; mkState.sort = k; draw() }))
 }
 async function marketOne(sym) {
   const m = await api('/markets/' + sym), cs = m.closes.filter((c) => c[1] != null), p = cs[cs.length - 1]?.[1], d = cs[cs.length - 25]?.[1], f = cs[0]?.[1]
