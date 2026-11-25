@@ -1,0 +1,49 @@
+{
+  "brief": "Buy chip stocks when they make a new 3-day high, sell when they fall 2% below their 48 hour average. Stop loss 7%.",
+  "config": {
+    "kind": "rules",
+    "name": "NVDA + MU +1 breakout",
+    "markets": [
+      "NVDA",
+      "MU",
+      "TSM"
+    ],
+    "budget": 1000,
+    "stopLoss": 0.07,
+    "takeProfit": 0,
+    "maxHold": 0,
+    "rules": {
+      "buy": [
+        {
+          "a": {
+            "k": "price"
+          },
+          "op": "crosses_above",
+          "b": {
+            "k": "high",
+            "h": 72
+          },
+          "pct": 0
+        }
+      ],
+      "sell": [
+        {
+          "a": {
+            "k": "price"
+          },
+          "op": "below",
+          "b": {
+            "k": "avg",
+            "h": 48
+          },
+          "pct": -2
+        }
+      ]
+    },
+    "amount": 0,
+    "maxPerMarket": 0.3333333333333333
+  },
+  "notes": [
+    "No budget given, so it starts at $1,000. Change it below."
+  ]
+}

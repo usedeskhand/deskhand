@@ -1,0 +1,49 @@
+{
+  "brief": "Buy GME when RSI is below 30, sell when RSI is above 60. Hold at most 3 days.",
+  "config": {
+    "kind": "rules",
+    "name": "GME RSI",
+    "markets": [
+      "GME"
+    ],
+    "budget": 1000,
+    "stopLoss": 0,
+    "takeProfit": 0,
+    "maxHold": 72,
+    "rules": {
+      "buy": [
+        {
+          "a": {
+            "k": "rsi",
+            "h": 24
+          },
+          "op": "below",
+          "b": {
+            "k": "num",
+            "v": 30
+          },
+          "pct": 0
+        }
+      ],
+      "sell": [
+        {
+          "a": {
+            "k": "rsi",
+            "h": 24
+          },
+          "op": "above",
+          "b": {
+            "k": "num",
+            "v": 60
+          },
+          "pct": 0
+        }
+      ]
+    },
+    "amount": 0,
+    "maxPerMarket": 1
+  },
+  "notes": [
+    "No budget given, so it starts at $1,000. Change it below."
+  ]
+}

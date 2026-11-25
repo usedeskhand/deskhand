@@ -1,0 +1,38 @@
+{
+  "brief": "Buy $25 of bitcoin every day, only if it is below its 7 day average.",
+  "config": {
+    "kind": "dca",
+    "name": "BTC daily buy",
+    "markets": [
+      "BTC"
+    ],
+    "budget": 750,
+    "stopLoss": 0,
+    "takeProfit": 0,
+    "maxHold": 0,
+    "amount": 25,
+    "every": 24,
+    "dow": null,
+    "at": 14,
+    "maxPerMarket": 1,
+    "rules": {
+      "buy": [
+        {
+          "a": {
+            "k": "price"
+          },
+          "op": "below",
+          "b": {
+            "k": "avg",
+            "h": 168
+          },
+          "pct": 0
+        }
+      ],
+      "sell": []
+    }
+  },
+  "notes": [
+    "No total budget given, so it is set to 30 days of buys: $750."
+  ]
+}

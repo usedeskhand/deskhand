@@ -1,0 +1,25 @@
+{
+  "brief": "Keep 50% SPY, 30% QQQ and 20% gold. Rebalance every week or when a weight drifts 5 points. Budget $5,000.",
+  "config": {
+    "kind": "basket",
+    "name": "SPY + QQQ +1 basket",
+    "markets": [
+      "SPY",
+      "QQQ",
+      "GLD"
+    ],
+    "budget": 5000,
+    "stopLoss": 0,
+    "takeProfit": 0,
+    "maxHold": 0,
+    "weights": {
+      "SPY": 0.5,
+      "QQQ": 0.3,
+      "GLD": 0.2
+    },
+    "every": 168,
+    "drift": 5,
+    "maxPerMarket": 1
+  },
+  "notes": []
+}

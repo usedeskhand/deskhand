@@ -1,0 +1,24 @@
+{
+  "brief": "Buy $50 of NVDA every Monday at 14:00 UTC, with a budget of $1,000.",
+  "config": {
+    "kind": "dca",
+    "name": "NVDA weekly buy",
+    "markets": [
+      "NVDA"
+    ],
+    "budget": 1000,
+    "stopLoss": 0,
+    "takeProfit": 0,
+    "maxHold": 0,
+    "amount": 50,
+    "every": 168,
+    "dow": 1,
+    "at": 14,
+    "maxPerMarket": 1,
+    "rules": {
+      "buy": [],
+      "sell": []
+    }
+  },
+  "notes": []
+}

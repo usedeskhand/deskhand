@@ -1,0 +1,34 @@
+{
+  "brief": "Buy TSLA when it drops 5% in a day. Sell when it is up 8% or down 6%. Budget $2,000, at most 50% per trade.",
+  "config": {
+    "kind": "rules",
+    "name": "TSLA dip buyer",
+    "markets": [
+      "TSLA"
+    ],
+    "budget": 2000,
+    "stopLoss": 0.06,
+    "takeProfit": 0.08,
+    "maxHold": 0,
+    "rules": {
+      "buy": [
+        {
+          "a": {
+            "k": "change",
+            "h": 24
+          },
+          "op": "below",
+          "b": {
+            "k": "num",
+            "v": -5
+          },
+          "pct": 0
+        }
+      ],
+      "sell": []
+    },
+    "amount": 0,
+    "maxPerMarket": 0.5
+  },
+  "notes": []
+}
