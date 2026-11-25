@@ -1,0 +1,17 @@
+{
+  "name": "deskhand",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test/api.mjs"
+  },
+  "dependencies": {
+    "viem": "2.57.16"
+  },
+  "license": "MIT",
+  "description": "Trading agents you write in plain English, for stock tokens on Robinhood Chain.",
+  "engines": {
+    "node": ">=22.5"
+  }
+}
