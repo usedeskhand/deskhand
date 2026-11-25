@@ -3,6 +3,16 @@
 <p align="center">Trading agents you write in plain English, for stock tokens on Robinhood Chain.</p>
 <p align="center"><a href="https://deskhand.markets">deskhand.markets</a> · <a href="https://x.com/usedeskhand">@usedeskhand</a></p>
 
+<p align="center">
+  <a href="https://deskhand.markets"><img alt="Live" src="https://img.shields.io/badge/live-deskhand.markets-0e172b?style=flat-square"></a>
+  <a href="docs/mcp.md"><img alt="MCP" src="https://img.shields.io/badge/MCP-10%20tools-4276fb?style=flat-square"></a>
+  <img alt="Chain" src="https://img.shields.io/badge/Robinhood%20Chain-4663-475569?style=flat-square">
+  <img alt="Node" src="https://img.shields.io/badge/node-%E2%89%A522.5-475569?style=flat-square">
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-475569?style=flat-square"></a>
+</p>
+
+<p align="center"><img src="docs/img/home.jpg" alt="Deskhand home page" width="860"></p>
+
 ---
 
 You write a rule the way you would say it to a person:
@@ -11,7 +21,29 @@ You write a rule the way you would say it to a person:
 
 Deskhand reads it into rules you can check line by line, replays those rules on the last 30 days of hourly on-chain prices, and then runs them every hour inside the budget and the tokens you allowed. You can publish an agent on the marketplace, free or priced in USDG, and other people install their own copy with their own budget.
 
-This repository is the whole product: the server, the agent engine, the plain-English reader, the marketplace and the app.
+This repository is the whole product: the server, the agent engine, the plain-English reader, the marketplace, the MCP server and the app.
+
+| | |
+|---|---|
+| <img src="docs/img/builder.jpg" alt="The builder: a brief read into rules"> | <img src="docs/img/simulation.jpg" alt="A 30-day replay next to holding"> |
+| **Builder.** One sentence in, rules you can read out. | **Replay.** The same engine, on the last 30 days of hourly on-chain prices. |
+| <img src="docs/img/marketplace.jpg" alt="The marketplace"> | <img src="docs/img/agent.jpg" alt="An agent's page with its decision log"> |
+| **Marketplace.** Publish an agent, free or priced in USDG. | **Every decision explained.** One line per market per hour. |
+
+## Documentation
+
+| | |
+|---|---|
+| [Architecture](docs/architecture.md) | How the server, the hourly loop and the engine fit together (with a diagram) |
+| [The brief language](docs/brief-language.md) | Every phrasing the reader understands, with today's examples |
+| [The engine](docs/engine.md) | Indicators, rules, `plan`, `apply`, `replay` |
+| [Paper and wallet mode](docs/wallet-mode.md) | What an agent can do, and the six steps of a signed trade |
+| [Marketplace](docs/marketplace.md) | Listings, versions, paid installs |
+| [MCP server](docs/mcp.md) | Ten read-only tools for Claude, Cursor and any MCP client |
+| [HTTP API](docs/api.md) | Every endpoint |
+| [Markets](docs/markets.md) | The 22 tokens, their pools and addresses |
+| [Examples](examples/) | Six briefs with their rules and replays |
+| [FAQ](docs/faq.md) | Short answers |
 
 ## What is in here
 
@@ -65,6 +97,11 @@ Tools: `draft_agent`, `simulate_agent`, `list_markets`, `get_market_prices`, `li
 ## Not in this repository
 
 The marketing pages of the public site are built on a licensed website template that cannot be redistributed, so they are not included. The app here runs on its own with a plain header.
+
+## Project
+
+- [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+- Site: [deskhand.markets](https://deskhand.markets) · X: [@usedeskhand](https://x.com/usedeskhand)
 
 ## License
 
