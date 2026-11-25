@@ -1,0 +1,17 @@
+/* the design tokens the app uses (IBM Plex, slate neutrals) and a plain header for running the app on its own */
+@font-face{font-family:'IBM Plex Sans';font-weight:500;font-display:swap;src:url(/fonts/IBMPlexSans-500.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-weight:600;font-display:swap;src:url(/fonts/IBMPlexSans-600.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-weight:700;font-display:swap;src:url(/fonts/IBMPlexSans-700.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:500;font-display:swap;src:url(/fonts/IBMPlexMono-500.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-weight:600;font-display:swap;src:url(/fonts/IBMPlexMono-600.woff2) format('woff2')}
+:root{--_typography---family--font-main:'IBM Plex Sans',system-ui,sans-serif;--_typography---family--font-secondary:'IBM Plex Mono',ui-monospace,monospace;
+  --_colors---neutrals--neutral-100:#fff;--_colors---neutrals--neutral-200:#f1f5f9;--_colors---neutrals--neutral-300:#cfdbe8;--_colors---neutrals--neutral-400:#b9c1cc;--_colors---neutrals--neutral-500:#97a4b7;
+  --_colors---neutrals--neutral-600:#64748b;--_colors---neutrals--neutral-700:#18243f;--_colors---neutrals--neutral-800:#0e172b;--_colors---primary--primary-100:#475569;
+  --_colors---secondary--secondary-100:#ebf4ff;--_colors---secondary--secondary-200:#4276fb;--_colors---systems--yellow-100:#fffae9;--_colors---systems--yellow-200:#faedbf;--_colors---systems--yellow-400:#efc42c;
+  --_colors---systems--red-100:#fff5f6;--_colors---systems--red-200:#fac6d0;--_colors---systems--green-100:#eef9f5;--_colors---systems--green-300:#adecbb}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#0e172b;font-family:'IBM Plex Sans',system-ui,sans-serif}
+.top{border-bottom:1px solid #cfdbe8}.top>div{max-width:76rem;margin:0 auto;padding:1rem 1.5rem;display:flex;align-items:center;gap:1.6rem}
+.top .logo{display:flex;align-items:center;gap:.55rem;font-weight:600;font-size:1.25rem;letter-spacing:-.02em;color:#0e172b;text-decoration:none}.top .logo img{width:1.4rem}
+.top nav{display:flex;gap:1.2rem;flex:1}.top nav a{color:#18243f;text-decoration:none;font-size:.95rem}.top nav a.w--current{font-weight:600}
+.button{display:inline-flex;align-items:center;background:#475569;color:#fff;border-radius:.3rem;padding:.6rem 1rem;text-decoration:none;font-size:.9rem;font-weight:500}
+@media (max-width:640px){.top nav{display:none}}
